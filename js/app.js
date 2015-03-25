@@ -3,8 +3,6 @@ var Enemy = function() {
     //initial x-position (same)  
     this.x = -200;
     //initial y-position randomised across the three stone tiles
-    //70, 145, 225
-    //this.y = 225;
     var yPos = function(){
         var y = [65,145,225];
         //var y = [100,175,250];
@@ -46,11 +44,12 @@ var Player = function() {
     //initial position
     this.x = 200;
     this.y = 400;
-
+    //direction
     this.moveX=0;
-    this.moveY = 0;    
+    this.moveY = 0;
+    //speed    
     this.moveSpeed = 50;
-
+    //player image
     this.sprite = 'images/char-boy.png';
 }
 
@@ -58,7 +57,7 @@ var Player = function() {
 Player.prototype.update = function() {
     //move palyer code
     var changeX = player.getXPosition()+this.moveX*this.moveSpeed;
-    console.log(changeX);
+    //console.log(changeX);
     if((changeX<500 && this.moveX==1) ||
         (changeX>-50 && this.moveX==-1)) 
         this.x += this.moveX*this.moveSpeed;
@@ -68,7 +67,7 @@ Player.prototype.update = function() {
         (changeY>0 && this.moveY==-1)) 
         this.y += this.moveY*this.moveSpeed;
 
-    //stop after pressing, otherwise, it will move indefintely
+    //reset after pressing, otherwise, it will move indefintely
     this.moveX = 0; this.moveY = 0;
 }
 
@@ -108,9 +107,46 @@ Player.prototype.handleInput = function(hd) {
     }
 }
 
-//add a new enemy every 3 seconds
+/**
+**collectibles
+**/
+var Collectible = function(image,x,y) {
+    //position
+    this.x = x;
+    this.y = y;
+    //TODO resize image
+    this.sprite = image;
+}
+
+Collectible.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Collectible.prototype.getXPosition = function () {
+    return this.x;
+}
+
+Collectible.prototype.getYPosition = function() {
+    return this.y;
+}
+
+/**
+*Instantiates entities
+**/
 var allEnemies = [];
+//add a new enemy every 3 seconds
 setInterval(function(){allEnemies.push(new Enemy());},3000);
+
+//instantiate a player
+var player = new Player();
+
+//create an array of collectibles
+var gems = [];
+//instantiate collectibles
+gems.push( new Collectible('images/Gem Orange.png',200,200) );
+gems.push( new Collectible('images/Gem Green.png',100,200) );
+gems.push( new Collectible('images/Gem Blue.png',100,100) );
+gems.push( new Collectible('images/Key.png',400,200) );
 
 //TODO improve collision detection
 var checkCollisions = function() {  
@@ -125,15 +161,72 @@ var checkCollisions = function() {
             if (Math.abs(enemyPosX-playerPosX)<20 &&
                  Math.abs(enemyPosY-playerPosY)<40){
                 player.setPosition(200,400);
-                return;
+               // return;
             }
         });
 }
 
-//TODO make sure player doesn't exceed
+//TODO check if I can interface just like Java with above function
+//checkCollisions
+var getCollections = function() {
+    //here detect collection
+        var playerPosX = player.getXPosition();
+        var playerPosY = player.getYPosition();
+        gems.forEach(function(gem) {
+            var gemPosX = gem.getXPosition();
+            var gemPosY = gem.getYPosition();
+            if (Math.abs(gemPosX-playerPosX)<20 &&
+                 Math.abs(gemPosY-playerPosY)<40){
+                gems.splice(gems.indexOf(gem),1);
+            }
+        });
+}
 
-//instantiate a player
-var player = new Player();
+var checkEnd = function() {
+    if(gems.length==0) {
+       alert('Great success!');
+       //javascript for reloading page
+       window.location.reload();
+    }
+}
+
+
+//TODO fix
+var counter = 15;
+
+//TODO fix
+function countDown() {
+
+    counter--;
+    //displayCount(counter);
+    console.log(counter);
+
+    if (this.count==0){
+        alert('time is up!');
+        window.location.reload();
+    }
+    //return;
+}
+
+//TODO fix
+function displayCount(countDown) {
+
+      ctx.font = "20pt Impact";
+      ctx.textAlign="center";
+      
+      ctx.fillStyle = "white";
+
+      ctx.strokeStyle = "black";
+      ctx.linewidth = 2;
+
+      var text = "Time left:"+" "+this.count;
+
+      if (text != null){
+        ctx.fillText(text, 400, 100);
+        ctx.strokeText(text, 400, 100);
+      }
+
+}
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
