@@ -29,6 +29,13 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+    //define text style on game screen
+    ctx.font = "20pt Impact";
+    ctx.textAlign="center";      
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.linewidth = 2;
+
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -141,6 +148,7 @@ var Engine = (function(global) {
         renderEntities();
         //make sure to display time after rendering all entities
         displayCount();
+        displayLives();
     }
 
     /* This function is called by the render function and is called on each game

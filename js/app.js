@@ -3,15 +3,15 @@
 **2015
 ***/
 
-/**
-*Enemy class
-*parameters of the class include:
-*x-position: constant at -200
-*y-position randomly select y position along the 
-*           three stone tiles
-*speed
-*sprite or image
-**/
+////////////////
+//Enemy class
+//parameters of the class include:
+//x-position: constant at -200
+//y-position randomly select y position along the 
+//three stone tiles
+//speed: generate a random speed for enemy
+//sprite or image
+/////////////////////
 var Enemy = function() {
     //initial x-position (same)  
     this.x = -200;
@@ -52,6 +52,15 @@ Enemy.prototype.getYPosition = function() {
 
 ///////////////////
 //Player class and methods
+//parameters include:
+//x-position
+//y-position
+//moveX to be set when pressing
+//left or right key
+//moveY to be set when pressing
+//up or down key
+//speed
+//sprite or image
 ///////////////////
 var Player = function() {
     //initial position
@@ -66,16 +75,19 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
 }
 
+//update player position based on movement key input
+//Player movement is limited within the game screen
 Player.prototype.update = function() {
     //move palyer code
     var changeX = player.getXPosition()+this.moveX*this.speed;
     
-    if((changeX<500 && this.moveX==1) ||
+    if((changeX<450 && this.moveX==1) ||
         (changeX>-50 && this.moveX==-1)) 
         this.x += this.moveX*this.speed;
 
     var changeY = player.getYPosition()+this.moveY*this.speed;
-    if((changeY<500 && this.moveY==1) ||
+
+    if((changeY<450 && this.moveY==1) ||
         (changeY>0 && this.moveY==-1)) 
         this.y += this.moveY*this.speed;
 
@@ -158,6 +170,19 @@ Counter.prototype.getCount = function () {
     return this.counter;
 }
 
+//Lives class
+var Lives = function(value) {
+    this.num = value;
+}
+
+Lives.prototype.numDown = function() {
+    this.num--;
+}
+
+Lives.prototype.getNum = function () {
+    return this.num;
+}
+
 ///////////////////////
 //Instantiate entities including enemies, player, gems
 //and counter
@@ -176,13 +201,17 @@ var player = new Player();
 //create an array of collectibles
 var gems = [];
 //instantiate collectibles
-gems.push( new Collectible('images/Gem Orange.png',200,200) );
-gems.push( new Collectible('images/Gem Green.png',100,200) );
-gems.push( new Collectible('images/Gem Blue.png',100,100) );
+gems.push( new Collectible('images/Gem Orange.png',300,50) );
+gems.push( new Collectible('images/Gem Green.png',150,200) );
+gems.push( new Collectible('images/Gem Blue.png',100,50) );
 gems.push( new Collectible('images/Key.png',400,200) );
 
-//declare a counter variable and initialize it to x seconds
+//instantiate a counter variable and initialize it
+//Here we initilize to 60
 var counter = new Counter(60);
+
+//player hs 3 lives
+var life = new Lives(3);
 
 ////////////////////////
 //Functions
@@ -198,15 +227,22 @@ var checkCollisions = function() {
 
         var playerPosX = player.getXPosition();
         var playerPosY = player.getYPosition();
-        //console.log("Player: "+playerPosX+" "+playerPosY);
         allEnemies.forEach(function(enemy) {
             var enemyPosX = enemy.getXPosition();
             var enemyPosY = enemy.getYPosition();
-            //console.log(enemyPosX+" "+enemyPosY);
             if (Math.abs(enemyPosX-playerPosX)<20 &&
                  Math.abs(enemyPosY-playerPosY)<40){
+                //if collision happened with enemey, 
+                //reset player position tp x=200,y=400
                 player.setPosition(200,400);
-               // return;
+                //lives
+                life.numDown();
+
+                if(life.getNum()==0){
+                    alert("Game Over!");
+                    window.location.reload();
+                }
+
             }
         });
 }
@@ -219,26 +255,24 @@ var checkCollisions = function() {
 **/
 var getCollections = function() {
     //here detect collection
-        var playerPosX = player.getXPosition();
-        var playerPosY = player.getYPosition();
-        gems.forEach(function(gem) {
-            var gemPosX = gem.getXPosition();
-            var gemPosY = gem.getYPosition();
-            if (Math.abs(gemPosX-playerPosX)<20 &&
-                 Math.abs(gemPosY-playerPosY)<40){
-                gems.splice(gems.indexOf(gem),1);
-                checkEnd();
+    var playerPosX = player.getXPosition();
+    var playerPosY = player.getYPosition();
+    gems.forEach(function(gem) {
+        var gemPosX = gem.getXPosition();
+        var gemPosY = gem.getYPosition();
+        if (Math.abs(gemPosX-playerPosX)<20 &&
+            Math.abs(gemPosY-playerPosY)<40){
+            //if collection happened, take gem
+            //off the list
+            gems.splice(gems.indexOf(gem),1);
+            //game is completed when gem is left
+            if(gems.length==0) {
+                alert('All gems are collected. Great success!');
+                //javascript for reloading page
+                window.location.reload();
             }
-        });
-}
-
-//check if there are not gems left
-var checkEnd = function() {
-    if(gems.length==0) {
-       alert('All gems are collected. Great success!');
-       //javascript for reloading page
-       window.location.reload();
-    }
+        }
+    });
 }
 
 /**
@@ -249,27 +283,34 @@ var checkEnd = function() {
 var countDown = function () {
     setInterval(function () {
         counter.countDown();
+        //when counter = 0, game over
         if (counter.getCount()==0){
             alert('Time is up!');
             window.location.reload();
         }
     }, 1000);    
-}  
+}
 
 //start counter
 countDown();
 
 var displayCount = function () {
-      ctx.font = "20pt Impact";
-      ctx.textAlign="center";      
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "black";
-      ctx.linewidth = 2;
       var text = "Time left:"+" "+counter.getCount();
       if (text != null){
         ctx.fillText(text, 400, 100);
         ctx.strokeText(text, 400, 100);
       }
+}
+
+var displayLives = function() {
+
+    ctx.drawImage(Resources.get('images/char-boy.png'), 50, -20);
+    var text = life.getNum()+" "+"x";
+    if (text != null){
+      ctx.fillText(text, 50, 100);
+      ctx.strokeText(text, 50, 100);
+    }
+    
 }
 
 // This listens for key presses and sends the keys to your
