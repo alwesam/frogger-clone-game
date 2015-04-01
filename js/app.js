@@ -1,4 +1,17 @@
-// Enemies our player must avoid
+/***
+**Wesam Al-Haddad
+**2015
+***/
+
+/**
+*Enemy class
+*parameters of the class include:
+*x-position: constant at -200
+*y-position randomly select y position along the 
+*           three stone tiles
+*speed
+*sprite or image
+**/
 var Enemy = function() {
     //initial x-position (same)  
     this.x = -200;
@@ -28,18 +41,18 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
-//get position of the enemy
+//get x-position of the enemy
 Enemy.prototype.getXPosition = function() {
     return this.x;
 }
-
+//get y-position of the enemy
 Enemy.prototype.getYPosition = function() {
     return this.y;
 }
 
-/**
-*Player class
-**/
+///////////////////
+//Player class and methods
+///////////////////
 var Player = function() {
     //initial position
     this.x = 200;
@@ -48,48 +61,51 @@ var Player = function() {
     this.moveX=0;
     this.moveY = 0;
     //speed    
-    this.moveSpeed = 50;
+    this.speed = 50;
     //player image
     this.sprite = 'images/char-boy.png';
 }
 
-//TODO clean up
 Player.prototype.update = function() {
     //move palyer code
-    var changeX = player.getXPosition()+this.moveX*this.moveSpeed;
-    //console.log(changeX);
+    var changeX = player.getXPosition()+this.moveX*this.speed;
+    
     if((changeX<500 && this.moveX==1) ||
         (changeX>-50 && this.moveX==-1)) 
-        this.x += this.moveX*this.moveSpeed;
+        this.x += this.moveX*this.speed;
 
-    var changeY = player.getYPosition()+this.moveY*this.moveSpeed;
+    var changeY = player.getYPosition()+this.moveY*this.speed;
     if((changeY<500 && this.moveY==1) ||
         (changeY>0 && this.moveY==-1)) 
-        this.y += this.moveY*this.moveSpeed;
+        this.y += this.moveY*this.speed;
 
-    //reset after pressing, otherwise, it will move indefintely
+    //reset after pressing, otherwise, it will keep moving
     this.moveX = 0; this.moveY = 0;
 }
 
-//get position of the player
+//get x-position of the player
 Player.prototype.getXPosition = function() {
     return this.x;
 }
-
+//get y-position of the player
 Player.prototype.getYPosition = function() {
     return this.y;
 }
 
+//set position of the player
 Player.prototype.setPosition = function (x,y) {
     this.x = x;
     this.y = y;
 }
 
-//check later
+// Draw player on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+/**
+*key input code
+**/
 Player.prototype.handleInput = function(hd) {
     
     if(hd=='right'){
@@ -108,13 +124,12 @@ Player.prototype.handleInput = function(hd) {
 }
 
 /**
-**collectibles
+**collectibles class and methods
 **/
 var Collectible = function(image,x,y) {
     //position
     this.x = x;
     this.y = y;
-    //TODO resize image
     this.sprite = image;
 }
 
@@ -129,6 +144,24 @@ Collectible.prototype.getXPosition = function () {
 Collectible.prototype.getYPosition = function() {
     return this.y;
 }
+
+//Counter class
+var Counter = function(value) {
+    this.counter = value;
+}
+
+Counter.prototype.countDown = function () {
+    this.counter--;
+}
+
+Counter.prototype.getCount = function () {
+    return this.counter;
+}
+
+///////////////////////
+//Instantiate entities including enemies, player, gems
+//and counter
+////////////////////////
 
 /**
 *Instantiates entities
@@ -148,7 +181,19 @@ gems.push( new Collectible('images/Gem Green.png',100,200) );
 gems.push( new Collectible('images/Gem Blue.png',100,100) );
 gems.push( new Collectible('images/Key.png',400,200) );
 
-//TODO improve collision detection
+//declare a counter variable and initialize it to x seconds
+var counter = new Counter(60);
+
+////////////////////////
+//Functions
+////////////////////////
+
+/**
+*Collision Detection function
+*collision occurs when player is within
+*20px and 40px  (x and y directions) from
+*enemy
+**/
 var checkCollisions = function() {  
 
         var playerPosX = player.getXPosition();
@@ -166,8 +211,12 @@ var checkCollisions = function() {
         });
 }
 
-//TODO check if I can interface just like Java with above function
-//checkCollisions
+/**
+*Gem collection function
+*collection occurs when player is within
+*20px and 40px  (x and y directions) from
+*any of the gems
+**/
 var getCollections = function() {
     //here detect collection
         var playerPosX = player.getXPosition();
@@ -178,54 +227,49 @@ var getCollections = function() {
             if (Math.abs(gemPosX-playerPosX)<20 &&
                  Math.abs(gemPosY-playerPosY)<40){
                 gems.splice(gems.indexOf(gem),1);
+                checkEnd();
             }
         });
 }
 
+//check if there are not gems left
 var checkEnd = function() {
     if(gems.length==0) {
-       alert('Great success!');
+       alert('All gems are collected. Great success!');
        //javascript for reloading page
        window.location.reload();
     }
 }
 
+/**
+*CountDown function includes setInterval
+*to separate each new count by 1000 ms or
+*one second
+**/
+var countDown = function () {
+    setInterval(function () {
+        counter.countDown();
+        if (counter.getCount()==0){
+            alert('Time is up!');
+            window.location.reload();
+        }
+    }, 1000);    
+}  
 
-//TODO fix
-var counter = 15;
+//start counter
+countDown();
 
-//TODO fix
-function countDown() {
-
-    counter--;
-    //displayCount(counter);
-    console.log(counter);
-
-    if (this.count==0){
-        alert('time is up!');
-        window.location.reload();
-    }
-    //return;
-}
-
-//TODO fix
-function displayCount(countDown) {
-
+var displayCount = function () {
       ctx.font = "20pt Impact";
-      ctx.textAlign="center";
-      
+      ctx.textAlign="center";      
       ctx.fillStyle = "white";
-
       ctx.strokeStyle = "black";
       ctx.linewidth = 2;
-
-      var text = "Time left:"+" "+this.count;
-
+      var text = "Time left:"+" "+counter.getCount();
       if (text != null){
         ctx.fillText(text, 400, 100);
         ctx.strokeText(text, 400, 100);
       }
-
 }
 
 // This listens for key presses and sends the keys to your

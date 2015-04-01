@@ -82,7 +82,6 @@ var Engine = (function(global) {
         updateEntities(dt);
         checkCollisions();
         getCollections();
-        checkEnd();
         //countDown();
     }
 
@@ -139,8 +138,9 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
+        //make sure to display time after rendering all entities
+        displayCount();
     }
 
     /* This function is called by the render function and is called on each game
