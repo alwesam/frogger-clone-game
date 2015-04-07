@@ -240,6 +240,7 @@ var checkCollisions = function() {
 
                 if(life.getNum()==0){
                     alert("Game Over!");
+                    //reload page and start over
                     window.location.reload();
                 }
 
@@ -291,9 +292,6 @@ var countDown = function () {
     }, 1000);    
 }
 
-//start counter
-countDown();
-
 var displayCount = function () {
       var text = "Time left:"+" "+counter.getCount();
       if (text != null){
@@ -325,3 +323,6 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+//start counter
+countDown();

@@ -146,7 +146,7 @@ var Engine = (function(global) {
         }
 
         renderEntities();
-        //make sure to display time after rendering all entities
+        //make sure to display time and number of lives after rendering all other entities
         displayCount();
         displayLives();
     }
