@@ -19,10 +19,10 @@ Launch the frogger file using a web browser of your choice.  You have 60 seconds
 
 To control and move the player, use the following arrow keys:
 
-UP arrow - to move up
-DOWN arrow - to move down
-RIGHT arrow - to move right
-LEFT arrow - to move left
+- UP arrow : to move up
+- DOWN arrow : to move down
+- RIGHT arrow : to move right
+- LEFT arrow : to move left
 
 The game is concluded when:
 
