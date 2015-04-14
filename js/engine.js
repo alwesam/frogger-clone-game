@@ -88,8 +88,8 @@ var Engine = (function (global) {
     function update(dt) {
         updateEntities(dt);
         player.checkCollisions();
-        gems.forEach(function (gem) {
-            gem.getCollections();
+        collections.forEach(function (item) {
+            item.getCollections();
         });
     }
 
@@ -162,8 +162,8 @@ var Engine = (function (global) {
          */
 
          //render collectibles
-        gems.forEach(function (gem) {
-            gem.render();
+        collections.forEach(function (item) {
+            item.render();
         });
 
         allEnemies.forEach(function (enemy) {
