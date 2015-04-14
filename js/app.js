@@ -20,11 +20,11 @@ var Enemy = function () {
     /*initial y-position randomised across the three stone tiles*/
     var yPos = function () {
         var y = [65, 145, 225];
-        return y[Math.floor(Math.random()*y.length)];
+        return y[Math.floor(Math.random() * y.length)];
     };
     this.y = yPos();
     /*generate a random speed between 80 inclusive and 240 exclusive*/
-    this.speed = 80+Math.floor(Math.random()*200);
+    this.speed = 80 + Math.floor(Math.random() * 200);
     /* The image/sprite for our enemies, this uses
       a helper we've provided to easily load images*/
     this.sprite = 'images/enemy-bug.png';
@@ -38,7 +38,7 @@ var Enemy = function () {
 /* Parameter: dt, a time delta between ticks*/
 Enemy.prototype.update = function (dt) {
     //console.log(dt);    
-    this.x += this.speed*dt;
+    this.x += this.speed * dt;
 };
 
 /*Draw the enemy on the screen, required method for game*/
@@ -71,7 +71,7 @@ var Player = function () {
     this.x = 200;
     this.y = 400;
     /*direction*/
-    this.moveX=0;
+    this.moveX = 0;
     this.moveY = 0;  
     /*update speed so player can move in blocks*/
     this.speedX = 100;
@@ -87,17 +87,19 @@ var Player = function () {
  */
 Player.prototype.update = function () {
     /*move palyer code*/
-    var changeX = this.getXPosition()+this.moveX*this.speedX;
+    var changeX = this.getXPosition() + this.moveX * this.speedX;
     
-    if((changeX<450 && this.moveX==1) ||
-        (changeX>-50 && this.moveX==-1)) 
-        this.x += this.moveX*this.speedX;
+    if ((changeX < 450 && this.moveX === 1) ||
+            (changeX > -50 && this.moveX === -1)) {
+                this.x += this.moveX * this.speedX;
+        }
 
-    var changeY = this.getYPosition()+this.moveY*this.speedY;
+    var changeY = this.getYPosition() + this.moveY * this.speedY;
 
-    if((changeY<450 && this.moveY==1) ||
-        (changeY>0 && this.moveY==-1)) 
-        this.y += this.moveY*this.speedY;
+    if ((changeY < 450 && this.moveY === 1) ||
+            (changeY > 0 && this.moveY === -1)) {
+                this.y += this.moveY * this.speedY;
+        }
 
     /* reset after pressing, otherwise, it will keep moving*/
     this.moveX = 0; this.moveY = 0;
@@ -128,16 +130,16 @@ Player.prototype.render = function () {
 **/
 Player.prototype.handleInput = function (hd) {
     
-    if(hd=='right'){
+    if (hd === 'right') {
         this.moveX = 1;
         this.moveY = 0;
-    } else if (hd == 'left') {
+    } else if (hd === 'left') {
         this.moveX = -1;
         this.moveY = 0;
-    } else if (hd == 'up'){
+    } else if (hd === 'up'){
         this.moveX = 0;
         this.moveY = -1;
-    } else if (hd == 'down') {
+    } else if (hd === 'down') {
         this.moveX = 0;
         this.moveY = 1;
     }
@@ -150,28 +152,27 @@ Player.prototype.handleInput = function (hd) {
  */
 Player.prototype.checkCollisions = function () {  
 
-        var playerPosX = this.getXPosition();
-        var playerPosY = this.getYPosition();
-        /* save this in a variable to refer to calling the player*/
-        var p = this;
-        allEnemies.forEach(function (enemy) {
-            var enemyPosX = enemy.getXPosition();
-            var enemyPosY = enemy.getYPosition();
-            if (Math.abs(enemyPosX-playerPosX)<50 &&
-                 Math.abs(enemyPosY-playerPosY)<50){
+    var playerPosX = this.getXPosition();
+    var playerPosY = this.getYPosition();
+    /* save this in a variable to refer to calling the player*/
+    var p = this;
+    allEnemies.forEach(function (enemy) {
+        var enemyPosX = enemy.getXPosition();
+        var enemyPosY = enemy.getYPosition();
+        if (Math.abs(enemyPosX - playerPosX) < 50 &&
+                Math.abs(enemyPosY - playerPosY) < 50) {
                 /*if collision happened with enemey, 
                   reset player position to x=200,y=400*/
-                p.setPosition(200,400);
+                p.setPosition(200, 400);
                 /*lives reduced by one*/
                 p.numLivesDown();
                 /*restart game if number of player lives is zero*/
-                if(p.getLivesNum()===0){
+                if (p.getLivesNum() === 0) {
                     alert("Game Over!");
                     window.location.reload();
                 }
-
-            }
-        });
+        }
+    });
 };
 
 /* decrement number of lives whenever player
@@ -238,12 +239,12 @@ Collectible.prototype.getCollections = function () {
     var playerPosY = player.getYPosition();
     var gemPosX = this.getXPosition();
     var gemPosY = this.getYPosition();
-    if (Math.abs(gemPosX-playerPosX)<50 &&
-        Math.abs(gemPosY-playerPosY)<50){
+    if (Math.abs(gemPosX - playerPosX) < 50 &&
+        Math.abs(gemPosY - playerPosY) < 50) {
         //if collection happened, take gem
         //off the list
-        gems.splice(gems.indexOf(this),1); 
-        if(gems.length===0) {
+        gems.splice(gems.indexOf(this), 1); 
+        if (gems.length === 0) {
             alert('All gems are collected. Great success!');
             //javascript for reloading page
             window.location.reload();
@@ -271,7 +272,7 @@ Counter.prototype.countDown = function () {
     var c = this;
     setInterval( function () 
                 {  
-                    if (c.getCount() === 0){
+                    if (c.getCount() === 0) {
                         alert('Time is up!');
                         window.location.reload();
                     } else {
@@ -289,8 +290,8 @@ Counter.prototype.getCount = function () {
 
 /* display time left on upper right corner of screen*/
 Counter.prototype.displayCount = function () {
-      var text = "Time left:"+" "+this.getCount();
-      if (text !== null){
+      var text = "Time left:" + " " + this.getCount();
+      if (text !== null) {
         ctx.fillText(text, 400, 100);
         ctx.strokeText(text, 400, 100);
       }
