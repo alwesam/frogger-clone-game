@@ -172,6 +172,12 @@ Player.prototype.displayLives = function() {
     }
 };
 
+Player.prototype.reset = function (){
+    this.x = 200;
+    this.y = 400;
+    this.numLives = 3;
+}
+
 /**
  * Collectibles class and methods
  * each collectible is defined by
@@ -255,6 +261,10 @@ Counter.prototype.displayCount = function() {
     }
 };
 
+Counter.prototype.reset = function (resetValue) {
+    this.seconds = resetValue;
+}
+
 /*****************INSTANTIATIONS**************************/
 
 /*instantiate enemies*/
@@ -288,11 +298,9 @@ var counter = new Counter(60);
 
 var reset = function() {
     /*set player position to original*/
-    player.x = 200;
-    player.y = 400;
-    player.numLives = 3;
-    counter.seconds = 60;
-    /*empty array*/
+    player.reset();
+    counter.reset(60);
+    /*empty collections array*/
     collections = [];
     fillCollectionsArray();
 };
