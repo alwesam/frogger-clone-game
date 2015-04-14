@@ -46,16 +46,6 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-/* get x-position of the enemy */
-Enemy.prototype.getXPosition = function() {
-    return this.x;
-};
-
-/* get y-position of the enemy*/
-Enemy.prototype.getYPosition = function() {
-    return this.y;
-};
-
 /**
  * Player class and methods
  * parameters include:
@@ -87,14 +77,14 @@ var Player = function() {
  */
 Player.prototype.update = function() {
     /*move palyer code*/
-    var changeX = this.getXPosition() + this.moveX * this.speedX;
+    var changeX = this.x + this.moveX * this.speedX;
 
     if ((changeX < 450 && this.moveX === 1) ||
         (changeX > -50 && this.moveX === -1)) {
         this.x += this.moveX * this.speedX;
     }
 
-    var changeY = this.getYPosition() + this.moveY * this.speedY;
+    var changeY = this.y + this.moveY * this.speedY;
 
     if ((changeY < 450 && this.moveY === 1) ||
         (changeY > 0 && this.moveY === -1)) {
@@ -104,21 +94,6 @@ Player.prototype.update = function() {
     /* reset after pressing, otherwise, it will keep moving*/
     this.moveX = 0;
     this.moveY = 0;
-};
-
-/* get x-position of the player*/
-Player.prototype.getXPosition = function() {
-    return this.x;
-};
-/* get y-position of the player*/
-Player.prototype.getYPosition = function() {
-    return this.y;
-};
-
-/* set position of the player*/
-Player.prototype.setPosition = function(x, y) {
-    this.x = x;
-    this.y = y;
 };
 
 /* Draw player on the screen*/
@@ -153,22 +128,23 @@ Player.prototype.handleInput = function(hd) {
  */
 Player.prototype.checkCollisions = function() {
 
-    var playerPosX = this.getXPosition();
-    var playerPosY = this.getYPosition();
+    var playerPosX = this.x;
+    var playerPosY = this.y;
     /* save this in a variable to refer to calling the player*/
     var p = this;
     allEnemies.forEach(function(enemy) {
-        var enemyPosX = enemy.getXPosition();
-        var enemyPosY = enemy.getYPosition();
+        var enemyPosX = enemy.x;
+        var enemyPosY = enemy.y;
         if (Math.abs(enemyPosX - playerPosX) < 50 &&
             Math.abs(enemyPosY - playerPosY) < 50) {
             /*if collision happened with enemey, 
               reset player position to x=200,y=400*/
-            p.setPosition(200, 400);
+            p.x = 200;
+            p.y = 400;
             /*lives reduced by one*/
             p.numLivesDown();
             /*restart game if number of player lives is zero*/
-            if (p.getLivesNum() === 0) {
+            if (p.numLives === 0) {
                 alert("Game Over!");
                 /*reset function*/
                 reset();
@@ -185,18 +161,11 @@ Player.prototype.numLivesDown = function() {
 };
 
 /**
- * return number of lives
- */
-Player.prototype.getLivesNum = function() {
-    return this.numLives;
-};
-
-/**
  * display number of player lives in the upper left corner of screen
  */
 Player.prototype.displayLives = function() {
     ctx.drawImage(Resources.get('images/char-boy.png'), 50, -20);
-    var text = this.getLivesNum() + " " + "x";
+    var text = this.numLives + " " + "x";
     if (text !== null) {
         ctx.fillText(text, 50, 100);
         ctx.strokeText(text, 50, 100);
@@ -223,14 +192,6 @@ Collectible.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Collectible.prototype.getXPosition = function() {
-    return this.x;
-};
-
-Collectible.prototype.getYPosition = function() {
-    return this.y;
-};
-
 /**
  * Gem collection function
  * collection occurs when player is within 20px and 40px  (x and y directions)
@@ -238,16 +199,16 @@ Collectible.prototype.getYPosition = function() {
  */
 Collectible.prototype.getCollections = function() {
     //here detect collection
-    var playerPosX = player.getXPosition();
-    var playerPosY = player.getYPosition();
-    var itemPosX = this.getXPosition();
-    var itemPosY = this.getYPosition();
+    var playerPosX = player.x;
+    var playerPosY = player.y;
+    var itemPosX = this.x;
+    var itemPosY = this.y;
     if (Math.abs(itemPosX - playerPosX) < 50 &&
         Math.abs(itemPosY - playerPosY) < 50) {
         /*if collection happened, take item off the list*/        
         collections.splice(collections.indexOf(this), 1);
         if (collections.length === 0) {
-            alert('All collections are picked up. Great success!');
+            alert('All collections are picked up. Great success!');           
             /*reset game*/
             reset();
         }
@@ -273,7 +234,7 @@ Counter.prototype.countDown = function() {
      *anonymous function*/
     var c = this;
     setInterval(function() {
-            if (c.getCount() === 0) {
+            if (c.seconds === 0) {
                 alert('Time is up!');
                 /*reset game*/
                 reset();
@@ -285,14 +246,9 @@ Counter.prototype.countDown = function() {
     );
 };
 
-/* return number of lives */
-Counter.prototype.getCount = function() {
-    return this.seconds;
-};
-
 /* display time left on upper right corner of screen*/
 Counter.prototype.displayCount = function() {
-    var text = "Time left:" + " " + this.getCount();
+    var text = "Time left:" + " " + this.seconds;
     if (text !== null) {
         ctx.fillText(text, 400, 100);
         ctx.strokeText(text, 400, 100);
@@ -331,12 +287,12 @@ var counter = new Counter(60);
 /*************************RESET***************************/
 
 var reset = function() {
-    //set player position to original
+    /*set player position to original*/
     player.x = 200;
     player.y = 400;
     player.numLives = 3;
     counter.seconds = 60;
-    //empty array
+    /*empty array*/
     collections = [];
     fillCollectionsArray();
 };
