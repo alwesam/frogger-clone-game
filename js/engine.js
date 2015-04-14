@@ -149,7 +149,7 @@ var Engine = (function (global) {
         renderEntities();    
         //make sure to display time and number of lives after rendering all other entities
         counter.displayCount();
-        life.displayLives();
+        player.displayLives();
     }
 
     /* This function is called by the render function and is called on each game
