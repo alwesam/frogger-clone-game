@@ -176,7 +176,7 @@ Player.prototype.reset = function (){
     this.x = 200;
     this.y = 400;
     this.numLives = 3;
-}
+};
 
 /**
  * Collectibles class and methods
@@ -263,7 +263,7 @@ Counter.prototype.displayCount = function() {
 
 Counter.prototype.reset = function (resetValue) {
     this.seconds = resetValue;
-}
+};
 
 /*****************INSTANTIATIONS**************************/
 
